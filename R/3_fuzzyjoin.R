@@ -24,13 +24,13 @@ ial_gs %>%
            (prev_fuzz_ial %>%
               filter(REVISADO != "") %>%
               pull(ROW_ID))) %>%
-  fuzzy_ubigeo -> fuzzy_ial
+  fuzzy_ubigeo(bd_egtpi) -> fuzzy_ial
 ses_gs %>%
   filter(!ROW_ID %in%
            (prev_fuzz_ses %>%
               filter(REVISADO != "") %>%
               pull(ROW_ID))) %>%
-  fuzzy_ubigeo -> fuzzy_ses
+  fuzzy_ubigeo(bd_egtpi) -> fuzzy_ses
 
 # Reformat columns to output manual verification table ----
 fuzzy_verify(fuzzy_ial) -> verify_ial

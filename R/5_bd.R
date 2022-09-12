@@ -41,16 +41,9 @@ full_join(
     pivot_wider(id_cols = UBIGEO, names_from = MMAAAA,
                 values_from = c(H1, H2, H3, H4, H5, TOTAL)),
   by = "UBIGEO") %>%
-  relocate(
-    any_of(c("H1_052022", "H2_052022", "H3_052022", "H4_052022", "H5_052022", "TOTAL_052022",
-             "H1_062022", "H2_062022", "H3_062022", "H4_062022", "H5_062022", "TOTAL_062022",
-             "H1_072022", "H2_072022", "H3_072022", "H4_072022", "H5_072022", "TOTAL_072022",
-             "H1_082022", "H2_082022", "H3_082022", "H4_082022", "H5_082022", "TOTAL_082022",
-             "H1_092022", "H2_092022", "H3_092022", "H4_092022", "H5_092022", "TOTAL_092022")),
-    .after = "TOTAL_042022"
-  ) -> append_bd
+  bdcols_relocate(dates) -> append_bd
 
-egtpi %>%
+bd_egtpi %>%
   select(UBIGEO, IAL_CONFORMADA) %>%
   arrange(UBIGEO) %>%
   left_join(append_bd, by = "UBIGEO") %>%

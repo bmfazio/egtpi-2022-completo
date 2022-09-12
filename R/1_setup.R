@@ -10,40 +10,18 @@ suppressPackageStartupMessages({
   library(googlesheets4)
 })
 
-fuzzy_ubigeo <- function(x){
-  if(nrow(x) == 0)return(NULL)
-  egtpi %>%
-    mutate(DEPARTAMENTO =
-             ifelse(substr(UBIGEO, 1, 2) == "15",
-                    "LIMA", DEPARTAMENTO)) %>%
-    select(UBIGEO, DEPARTAMENTO, PROVINCIA, DISTRITO) %>%
-    stringdist_join(x,
-                    by = c("DEPARTAMENTO", "PROVINCIA", "DISTRITO"),
-                    mode = "left",
-                    ignore_case = TRUE, 
-                    method = "jw", 
-                    max_dist = 1, 
-                    distance_col = "dist") %>%
-    group_by(DEPARTAMENTO.y, PROVINCIA.y, DISTRITO.y) %>%
-    mutate(best_match = min(DEPARTAMENTO.dist)) %>%
-    filter(best_match > 0 | DEPARTAMENTO.dist == best_match) %>%
-    slice_min(order_by = DEPARTAMENTO.dist, n = 3) %>% 
-    mutate(best_match = min(PROVINCIA.dist)) %>%
-    filter(best_match > 0 | PROVINCIA.dist == best_match) %>%
-    slice_min(order_by = PROVINCIA.dist, n = 2) %>%
-    slice_min(order_by = (PROVINCIA.dist+1)*(DISTRITO.dist+1)+DISTRITO.dist, n = 1) %>%
-    mutate(dist = DEPARTAMENTO.dist + PROVINCIA.dist + DISTRITO.dist) %>%
-    relocate(DISTRITO.dist, .after = PROVINCIA.dist)
+source("R/subscripts/fun_fuzzy-joins.R", encoding = "utf-8")
+
+empty_tibble <- function(dates) { # uso en 4_ready
+  values <- c(NA, NA, replicate(length(dates), NA_real_, simplify = FALSE))
+  names(values) <- c("UBIGEO", "REGISTRO_IAL_2022", paste("TOTAL", dates, sep = "_"))
+  as_tibble(values)
 }
 
-fuzzy_verify <- function(x){
-  if(is.null(x))return(NULL)
+bdcols_relocate <- function(x, dates){ # uso en 5_bd
   x %>%
-    select(UBIGEO, DEPARTAMENTO.x, PROVINCIA.x, DISTRITO.x,
-           MARCATEMPORAL, ROW_ID,
-           DEPARTAMENTO.y, PROVINCIA.y, DISTRITO.y,
-           DEPARTAMENTO.dist, PROVINCIA.dist, DISTRITO.dist,
-           dist) %>%
-    arrange(DISTRITO.dist) %>%
-    mutate(REVISADO = "")
+    relocate(
+      any_of(paste0(c(paste0("H", 1:5, "_"), "TOTAL_"), rep(dates[-1], each = 6))),
+      .after = paste0("TOTAL_", dates[1])
+    )
 }

@@ -1,7 +1,7 @@
 suppressMessages(
   read_xlsx(where_bd,
             sheet = "2. DISTRITAL", skip = 1)
-) -> egtpi
+) -> bd_egtpi
 
 # Cargar registros via forms
 gs4_deauth()
@@ -75,5 +75,6 @@ read_sheet("1ZZhlElA70agj_hCvpKNeCzMcO1F7OLhheaZz86OYGuI",
       as_date
   ) -> ses_gs
 
+# Store the last versions of googledrive files being used
 write_xlsx(ial_gs, "mid/googlesheets/ial_gs.xlsx")
 write_xlsx(ses_gs, "mid/googlesheets/ses_gs.xlsx")
