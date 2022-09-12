@@ -65,14 +65,15 @@ full_join(
   pre_ial,
   pre_ses %>%
     summarise(TOTAL = max(TOTAL), .groups = "drop") %>%
-    filter(MMAAAA %in% c("042022", "052022", "062022", "072022", "082022")) %>%
+    filter(MMAAAA %in% rangoMMAAAA) %>%
     pivot_wider(id_cols = UBIGEO, names_from = MMAAAA,
                 values_from = TOTAL, names_prefix = "TOTAL_"),
   by = "UBIGEO") %>%
   bind_rows(
+    # PENDIENTE - GENERALIZA LA GENERACION DE ESTE TIBBLE USANDO rangoMMAAAA
     tibble(UBIGEO = NA, REGISTRO_IAL_2022 = NA, TOTAL_042022 = NA_real_,
            TOTAL_052022 = NA_real_, TOTAL_062022 = NA_real_, TOTAL_072022 = NA_real_,
-           TOTAL_082022 = NA_real_)) %>%
+           TOTAL_082022 = NA_real_, TOTAL_092022 = NA_real_)) %>%
   filter(!is.na(UBIGEO)) -> full_forms
 
 # Join to main EGTPI DB ----

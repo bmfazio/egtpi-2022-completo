@@ -1,4 +1,5 @@
 "in/EGTPI_BD_22_JULIO.xlsx" -> where_bd
+c("042022", "052022", "062022", "072022", "082022", "092022") -> rangoMMAAAA
 
 source("R/1_setup.R", encoding = "utf-8")
 source("R/2_load.R", encoding = "utf-8")
