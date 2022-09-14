@@ -1,0 +1,25 @@
+---
+title: Tablero de revisión EGTPI
+---
+
+```{css, echo=FALSE}
+body {
+  font-size: 12px;
+}
+.main-container {
+  max-width: 96%;
+}
+h1 {
+  font-size: 25px;
+}
+h1.title {
+  display: none;
+}
+```
+
+```{r, echo=FALSE, warning=FALSE, message=FALSE}
+objlist <- readRDS("mid/rmd-objs/sm-table.rds")
+objlist[[1]]
+objlist[[2]]
+objlist[[3]]
+```

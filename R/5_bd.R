@@ -41,7 +41,7 @@ full_join(
     pivot_wider(id_cols = UBIGEO, names_from = MMAAAA,
                 values_from = c(H1, H2, H3, H4, H5, TOTAL)),
   by = "UBIGEO") %>%
-  bdcols_relocate(dates) -> append_bd
+  bdcols_relocate(rangoMMAAAA) -> append_bd
 
 bd_egtpi %>%
   select(UBIGEO, IAL_CONFORMADA) %>%

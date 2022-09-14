@@ -76,5 +76,36 @@ read_sheet("1ZZhlElA70agj_hCvpKNeCzMcO1F7OLhheaZz86OYGuI",
   ) -> ses_gs
 
 # Store the last versions of googledrive files being used
+# ESTA PARTE DEBERIA REDISENARSE:
+# 1. Codigo siempre deberia poder correr offline con la ultima version que se descargo
+# 2. La actualizacion deberia ser voluntaria y dejar un registro claro del momento en que se hizo la descarga
+# POR LO TANTO:
+# 1. Separar codigo: primero descarga y almacena, luego se lee y transforma/ejecuta/etc
+# 2. Preguntar al correr los scripts si se desea actualizar o correr la misma version
 write_xlsx(ial_gs, "mid/googlesheets/ial_gs.xlsx")
 write_xlsx(ses_gs, "mid/googlesheets/ses_gs.xlsx")
+
+read_sheet(eval_results) %>%
+  filter(tolower(`Código del registro a evaluar [NO MODIFICAR]`) != "prueba",
+         tolower(`DNI de la persona que evalúa`) != "prueba") %>%
+  group_by(`Código del registro a evaluar [NO MODIFICAR]`) %>%
+  mutate(ORDEN = n():1) %>%
+  filter(ORDEN == 1) %>%
+  select(-ORDEN) %>%
+  ungroup() %>%
+  transmute(
+    UBIGEO = substr(`Código del registro a evaluar [NO MODIFICAR]`, 1, 6),
+    ROW_ID = as.numeric(substr(`Código del registro a evaluar [NO MODIFICAR]`, 8, 999)),
+    H1_EV = ifelse(`Evaluar herramientas [Herramienta 1: Sesión IAL + quórum]` == "Cumple",
+                   1, 0),
+    H2_EV = ifelse(`Evaluar herramientas [Herramienta 2: Acta de homologación]` == "Cumple",
+                   1, 0),
+    H3_EV = ifelse(`Evaluar herramientas [Herramienta 3: Mapa de sectorización]` == "Cumple",
+                   1, 0),
+    H4_EV = ifelse(`Evaluar herramientas [Herramienta 4: Seguimiento nominal]` == "Cumple",
+                   1, 0),
+    H5_EV = ifelse(`Evaluar herramientas [Herramienta 5: Análisis de cobertura]` == "Cumple",
+                   1, 0),
+    TOTAL_EV = ifelse(H1_EV == 0, 0, H1_EV+H2_EV+H3_EV+H4_EV+H5_EV),
+    ESTADO = `Resultado de la evaluación`,
+    ESTADO_OBS = `Ingrese su observación`) -> rev_total

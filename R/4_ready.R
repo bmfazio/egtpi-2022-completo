@@ -18,21 +18,23 @@ ready_fuzz_ial %>%
                             REVISADO == "NO" ~ "DROP",
                             TRUE ~ REVISADO)) %>%
   filter(UBIGEO != "DROP") %>%
-  select(UBIGEO, ROW_ID) -> ready_ial
+  select(UBIGEO, ROW_ID) %>%
+  unique -> matched_ial
 
 ready_fuzz_ses %>%
   mutate(UBIGEO = case_when(REVISADO == "OK" ~ UBIGEO,
                             REVISADO == "NO" ~ "DROP",
                             TRUE ~ REVISADO)) %>%
   filter(UBIGEO != "DROP") %>%
-  select(UBIGEO, ROW_ID) -> ready_ses
+  select(UBIGEO, ROW_ID) %>%
+  unique -> matched_ses
 
 ial_gs %>%
-  left_join(ready_ial,
+  left_join(matched_ial,
             by = "ROW_ID") -> ready_ial
 
 ses_gs %>%
-  left_join(ready_ses,
+  left_join(matched_ses,
             by = "ROW_ID") -> ready_ses
 
 # Collapse to relevant columns ----
