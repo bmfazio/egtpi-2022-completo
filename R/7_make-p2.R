@@ -3,8 +3,7 @@
 # PRIORIDAD (esto pa ver con cual me quedo)
 # H1, H2, H3, H4, H5, TOTAL, MES
 
-bd_egtpi %>%
-  select(UBIGEO) %>%
+p2_ubigeo %>%
   full_join(tibble(MES = meses_sm), by = character()) %>%
   left_join(
     input_p2 %>%

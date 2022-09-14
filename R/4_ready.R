@@ -62,26 +62,3 @@ ready_ses %>%
          H5 = ifelse(!is.na(H5_COBE) & H1 == 1, 1, 0),
          TOTAL = H1+H2+H3+H4+H5) %>%
   group_by(UBIGEO, MMAAAA) -> pre_ses
-
-full_join(
-  pre_ial,
-  pre_ses %>%
-    summarise(TOTAL = max(TOTAL), .groups = "drop") %>%
-    filter(MMAAAA %in% rangoMMAAAA) %>%
-    pivot_wider(id_cols = UBIGEO, names_from = MMAAAA,
-                values_from = TOTAL, names_prefix = "TOTAL_"),
-  by = "UBIGEO") %>%
-  bind_rows(empty_tibble(rangoMMAAAA)) %>%
-  filter(!is.na(UBIGEO)) -> full_forms
-
-# Join to main EGTPI DB ----
-bd_egtpi %>%
-  select(UBIGEO, DEPARTAMENTO, PROVINCIA, DISTRITO,
-         ESCALAMIENTO2022 = `ESCALAMIENTO\r\n2022\r\nTOTAL`,
-         SM2022 = `SELLO MUNICIPAL`,
-         PPSS_RESPONSABLE,
-         IAL_CONFORMADA) %>%
-  left_join(full_forms, by = "UBIGEO") %>%
-  mutate(IAL_CONFORMADA = case_when(!is.na(REGISTRO_IAL_2022) ~ "SI",
-                                    TRUE ~ IAL_CONFORMADA)) %>%
-  select(-REGISTRO_IAL_2022) -> ready_tableau
